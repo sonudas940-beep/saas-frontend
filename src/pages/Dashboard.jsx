@@ -21,11 +21,10 @@ export default function Dashboard() {
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-white/20 transition-all duration-500"></div>
           <div className="relative z-10">
             <span className="text-xs font-semibold text-blue-100 uppercase tracking-wider">Active Leads</span>
-            <h3 className="text-3xl font-black text-white mt-2 group-hover:scale-105 transition-transform origin-left">42</h3>
+            <h3 className="text-3xl font-black text-white mt-2 group-hover:scale-105 transition-transform origin-left">0</h3>
           </div>
           <span className="text-xs text-blue-100 font-medium mt-4 flex items-center relative z-10 bg-black/10 w-fit px-2 py-1 rounded-md">
-            <svg className="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
-            12% vs last week
+            Fresh Database
           </span>
         </div>
         
@@ -33,10 +32,10 @@ export default function Dashboard() {
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-white/20 transition-all duration-500"></div>
           <div className="relative z-10">
             <span className="text-xs font-semibold text-orange-100 uppercase tracking-wider">Service Tickets</span>
-            <h3 className="text-3xl font-black text-white mt-2 group-hover:scale-105 transition-transform origin-left">18</h3>
+            <h3 className="text-3xl font-black text-white mt-2 group-hover:scale-105 transition-transform origin-left">0</h3>
           </div>
           <span className="text-xs text-orange-50 font-medium mt-4 flex items-center relative z-10 bg-black/10 w-fit px-2 py-1 rounded-md">
-            5 Pending Engineer Assignment
+            0 Pending Engineer Assignment
           </span>
         </div>
         
@@ -44,10 +43,10 @@ export default function Dashboard() {
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-white/20 transition-all duration-500"></div>
           <div className="relative z-10">
             <span className="text-xs font-semibold text-teal-100 uppercase tracking-wider">RMA In-Progress</span>
-            <h3 className="text-3xl font-black text-white mt-2 group-hover:scale-105 transition-transform origin-left">8</h3>
+            <h3 className="text-3xl font-black text-white mt-2 group-hover:scale-105 transition-transform origin-left">0</h3>
           </div>
           <span className="text-xs text-teal-50 font-medium mt-4 flex items-center relative z-10 bg-black/10 w-fit px-2 py-1 rounded-md">
-            3 Sent to Brand Center
+            0 Sent to Brand Center
           </span>
         </div>
         
@@ -55,7 +54,7 @@ export default function Dashboard() {
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-white/20 transition-all duration-500"></div>
           <div className="relative z-10">
             <span className="text-xs font-semibold text-pink-100 uppercase tracking-wider">Pending Collections</span>
-            <h3 className="text-3xl font-black text-white mt-2 group-hover:scale-105 transition-transform origin-left">₹48,250</h3>
+            <h3 className="text-3xl font-black text-white mt-2 group-hover:scale-105 transition-transform origin-left">₹0</h3>
           </div>
           <span className="text-xs text-pink-50 font-medium mt-4 flex items-center relative z-10 bg-black/10 w-fit px-2 py-1 rounded-md">
             Requires Admin Verification
@@ -74,23 +73,8 @@ export default function Dashboard() {
         <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
           <h2 className="text-lg font-bold text-slate-800 mb-4">Pending Cash Verification</h2>
           <div className="space-y-4">
-            <div className="p-3 bg-amber-50 border border-amber-100 rounded-lg flex justify-between items-center">
-              <div>
-                <p className="font-semibold text-slate-800 text-xs">Service Ticket #SVC-102</p>
-                <p className="text-slate-500 text-[10px]">Rahul Sharma - ₹2,500 Cash</p>
-              </div>
-              <button className="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-semibold px-2 py-1 rounded">
-                Approve
-              </button>
-            </div>
-            <div className="p-3 bg-amber-50 border border-amber-100 rounded-lg flex justify-between items-center">
-              <div>
-                <p className="font-semibold text-slate-800 text-xs">RMA Out-of-Warranty #RMA-88</p>
-                <p className="text-slate-500 text-[10px]">Priya Sen - ₹1,800 Cash</p>
-              </div>
-              <button className="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-semibold px-2 py-1 rounded">
-                Approve
-              </button>
+            <div className="p-6 text-center text-slate-400 text-sm flex flex-col items-center justify-center border-2 border-dashed border-slate-100 rounded-lg">
+              No pending cash collections to verify.
             </div>
           </div>
         </div>
