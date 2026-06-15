@@ -5,6 +5,7 @@ export default function Sales() {
   const { token } = useAuth();
   const [leads, setLeads] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const [customDropdowns, setCustomDropdowns] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
@@ -22,6 +23,7 @@ export default function Sales() {
   const [requirement, setRequirement] = useState('');
   const [amount, setAmount] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
+  const [customFields, setCustomFields] = useState({});
 
   // Follow-up Form State
   const [followupNotes, setFollowupNotes] = useState('');
@@ -63,9 +65,31 @@ export default function Sales() {
     }
   };
 
+  const fetchSettings = async () => {
+    try {
+      const response = await fetch('https://saas-backend-wheat-gamma.vercel.app/api/settings', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await response.json();
+      if (response.ok) {
+        const custom = {};
+        const ignored = ['dropdown_lead_sources', 'dropdown_brands', 'dropdown_device_types', 'dropdown_expense_categories'];
+        Object.keys(data).forEach(key => {
+          if (key.startsWith('dropdown_') && !ignored.includes(key)) {
+            custom[key] = data[key];
+          }
+        });
+        setCustomDropdowns(custom);
+      }
+    } catch (err) {
+      console.error('Failed to fetch settings', err);
+    }
+  };
+
   useEffect(() => {
     fetchLeads();
     fetchEmployees();
+    fetchSettings();
   }, [token]);
 
   // Handle Lead creation
@@ -87,7 +111,8 @@ export default function Sales() {
           customer_email: email,
           requirement,
           total_amount: parseFloat(amount) || 0.00,
-          assigned_to: assignedTo || null
+          assigned_to: assignedTo || null,
+          custom_fields: customFields
         }),
       });
 
@@ -101,6 +126,7 @@ export default function Sales() {
         setRequirement('');
         setAmount('');
         setAssignedTo('');
+        setCustomFields({});
         setShowAddForm(false);
         fetchLeads();
       } else {
@@ -358,6 +384,25 @@ export default function Sales() {
               </select>
             </div>
 
+            {/* Dynamic Custom Dropdowns */}
+            {Object.keys(customDropdowns).map(key => (
+              <div key={key}>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                  {key.replace('dropdown_', '').replace(/_/g, ' ')}
+                </label>
+                <select
+                  value={customFields[key] || ''}
+                  onChange={(e) => setCustomFields({ ...customFields, [key]: e.target.value })}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 capitalize"
+                >
+                  <option value="">Select...</option>
+                  {customDropdowns[key].map(opt => (
+                    <option key={opt} value={opt}>{opt.replace(/_/g, ' ')}</option>
+                  ))}
+                </select>
+              </div>
+            ))}
+
             <div className="md:col-span-3 flex justify-end">
               <button
                 type="submit"
@@ -461,6 +506,22 @@ export default function Sales() {
                   👤 {selectedLead.assigned_name?.replace('Employee: ', '') || 'Unassigned Executive'}
                 </p>
               </div>
+
+              {/* Dynamic Custom Fields Rendering */}
+              {selectedLead.custom_fields && Object.keys(selectedLead.custom_fields).length > 0 && (
+                <div className="grid grid-cols-2 gap-4">
+                  {Object.keys(selectedLead.custom_fields).map(key => (
+                    <div key={key}>
+                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                        {key.replace('dropdown_', '').replace(/_/g, ' ')}
+                      </h4>
+                      <p className="text-xs font-semibold text-slate-700 capitalize">
+                        {selectedLead.custom_fields[key] || 'Not specified'}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Current Status Transitions panel */}
               <div>
