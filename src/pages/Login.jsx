@@ -169,15 +169,7 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Setup Tip */}
-          <div className="mt-10 p-4 bg-blue-50/50 rounded-xl border border-blue-100 flex items-start space-x-3 animate-fade-in delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>
-            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 text-blue-600">
-              💡
-            </div>
-            <div className="text-xs text-slate-600 leading-relaxed pt-1">
-              <span className="font-semibold text-slate-800">Initial Setup:</span> If database is empty, logging in with <span className="font-semibold text-slate-800">admin@techitworld.com</span> (pw: admin123) creates the Master profile.
-            </div>
-          </div>
+
 
         </div>
         
