@@ -5,6 +5,7 @@ export default function Service() {
   const { token } = useAuth();
   const [tickets, setTickets] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const [customDropdowns, setCustomDropdowns] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
@@ -21,6 +22,7 @@ export default function Service() {
   const [email, setEmail] = useState('');
   const [device, setDevice] = useState('');
   const [description, setDescription] = useState('');
+  const [customFields, setCustomFields] = useState({});
 
   // QR Webform Simulation State
   const [qrName, setQrName] = useState('');
@@ -68,9 +70,31 @@ export default function Service() {
     }
   };
 
+  const fetchSettings = async () => {
+    try {
+      const response = await fetch('https://saas-backend-wheat-gamma.vercel.app/api/settings', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await response.json();
+      if (response.ok) {
+        const custom = {};
+        const ignored = ['dropdown_lead_sources', 'dropdown_brands', 'dropdown_device_types', 'dropdown_expense_categories'];
+        Object.keys(data).forEach(key => {
+          if (key.startsWith('dropdown_') && !ignored.includes(key)) {
+            custom[key] = data[key];
+          }
+        });
+        setCustomDropdowns(custom);
+      }
+    } catch (err) {
+      console.error('Failed to fetch settings', err);
+    }
+  };
+
   useEffect(() => {
     fetchTickets();
     fetchEmployees();
+    fetchSettings();
   }, [token]);
 
   // Handle Manual Support Ticket submission
@@ -92,7 +116,8 @@ export default function Service() {
           customer_phone: phone,
           customer_email: email,
           device_details: device,
-          issue_description: description
+          issue_description: description,
+          custom_fields: customFields
         }),
       });
 
@@ -105,6 +130,7 @@ export default function Service() {
         setEmail('');
         setDevice('');
         setDescription('');
+        setCustomFields({});
         setShowAddForm(false);
         fetchTickets();
       } else {
@@ -319,6 +345,25 @@ export default function Service() {
               />
             </div>
 
+            {/* Dynamic Custom Dropdowns */}
+            {Object.keys(customDropdowns).map(key => (
+              <div key={key}>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                  {key.replace('dropdown_', '').replace(/_/g, ' ')}
+                </label>
+                <select
+                  value={customFields[key] || ''}
+                  onChange={(e) => setCustomFields({ ...customFields, [key]: e.target.value })}
+                  className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 capitalize focus:outline-none"
+                >
+                  <option value="">Select...</option>
+                  {customDropdowns[key].map(opt => (
+                    <option key={opt} value={opt}>{opt.replace(/_/g, ' ')}</option>
+                  ))}
+                </select>
+              </div>
+            ))}
+
             <div className="md:col-span-3 flex justify-end">
               <button
                 type="submit"
@@ -415,6 +460,22 @@ export default function Service() {
                   "{selectedTicket.issue_description}"
                 </p>
               </div>
+
+              {/* Dynamic Custom Fields Rendering */}
+              {selectedTicket.custom_fields && Object.keys(selectedTicket.custom_fields).length > 0 && (
+                <div className="grid grid-cols-2 gap-4">
+                  {Object.keys(selectedTicket.custom_fields).map(key => (
+                    <div key={key}>
+                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                        {key.replace('dropdown_', '').replace(/_/g, ' ')}
+                      </h4>
+                      <p className="text-xs font-semibold text-slate-700 capitalize">
+                        {selectedTicket.custom_fields[key] || 'Not specified'}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Status information panel */}
               <div className="flex justify-between items-center py-2 px-3 bg-slate-50 rounded-lg">
