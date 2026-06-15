@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 export default function RMA() {
   const { token } = useAuth();
   const [rmas, setRmas] = useState([]);
+  const [customDropdowns, setCustomDropdowns] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
@@ -22,6 +23,7 @@ export default function RMA() {
   const [serialNumber, setSerialNumber] = useState('');
   const [issueDescription, setIssueDescription] = useState('');
   const [warrantyStatus, setWarrantyStatus] = useState('in_warranty');
+  const [customFields, setCustomFields] = useState({});
 
   // Estimate & Brand Charge Action States
   const [estimateAmount, setEstimateAmount] = useState('');
@@ -48,8 +50,30 @@ export default function RMA() {
     }
   };
 
+  const fetchSettings = async () => {
+    try {
+      const response = await fetch('https://saas-backend-wheat-gamma.vercel.app/api/settings', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await response.json();
+      if (response.ok) {
+        const custom = {};
+        const ignored = ['dropdown_lead_sources', 'dropdown_brands', 'dropdown_device_types', 'dropdown_expense_categories'];
+        Object.keys(data).forEach(key => {
+          if (key.startsWith('dropdown_') && !ignored.includes(key)) {
+            custom[key] = data[key];
+          }
+        });
+        setCustomDropdowns(custom);
+      }
+    } catch (err) {
+      console.error('Failed to fetch settings', err);
+    }
+  };
+
   useEffect(() => {
     fetchRmas();
+    fetchSettings();
   }, [token]);
 
   // Handle product intake submit
@@ -75,6 +99,7 @@ export default function RMA() {
           serial_number: serialNumber,
           issue_description: issueDescription,
           warranty_status: warrantyStatus,
+          custom_fields: customFields
         }),
       });
 
@@ -90,6 +115,7 @@ export default function RMA() {
         setSerialNumber('');
         setIssueDescription('');
         setWarrantyStatus('in_warranty');
+        setCustomFields({});
         setShowAddForm(false);
         fetchRmas();
       } else {
@@ -272,10 +298,29 @@ export default function RMA() {
                   onChange={(e) => setWarrantyStatus(e.target.value)}
                   className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 font-semibold text-slate-700"
                 >
-                  <option value="in_warranty">✓ In Warranty (Free Repair)</option>
-                  <option value="out_of_warranty">⚠ Out of Warranty (Billable Estimate)</option>
+                  <option value="in_warranty">In-Warranty</option>
+                  <option value="out_of_warranty">Out-of-Warranty</option>
                 </select>
               </div>
+
+              {/* Dynamic Custom Dropdowns */}
+              {Object.keys(customDropdowns).map(key => (
+                <div key={key}>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                    {key.replace('dropdown_', '').replace(/_/g, ' ')}
+                  </label>
+                  <select
+                    value={customFields[key] || ''}
+                    onChange={(e) => setCustomFields({ ...customFields, [key]: e.target.value })}
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 capitalize focus:outline-none"
+                  >
+                    <option value="">Select...</option>
+                    {customDropdowns[key].map(opt => (
+                      <option key={opt} value={opt}>{opt.replace(/_/g, ' ')}</option>
+                    ))}
+                  </select>
+                </div>
+              ))}
 
               <div className="md:col-span-3">
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Issue / Symptoms Description</label>
@@ -384,6 +429,22 @@ export default function RMA() {
                   "{selectedRma.issue_description}"
                 </p>
               </div>
+
+              {/* Dynamic Custom Fields Rendering */}
+              {selectedRma.custom_fields && Object.keys(selectedRma.custom_fields).length > 0 && (
+                <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-4">
+                  {Object.keys(selectedRma.custom_fields).map(key => (
+                    <div key={key}>
+                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                        {key.replace('dropdown_', '').replace(/_/g, ' ')}
+                      </h4>
+                      <p className="text-xs font-semibold text-slate-700 capitalize">
+                        {selectedRma.custom_fields[key] || 'Not specified'}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Status Indicator banner */}
               <div className="flex justify-between items-center py-2.5 px-3 bg-slate-50 rounded-lg">
