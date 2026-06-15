@@ -23,6 +23,7 @@ export default function Settings() {
   // --- TAB 2: DROPDOWN MANAGER STATES ---
   const [dropdowns, setDropdowns] = useState({});
   const [newOptions, setNewOptions] = useState({});
+  const [newCustomCategory, setNewCustomCategory] = useState('');
 
   // --- TAB 3: WHATSAPP INTEGRATION STATES ---
   const [whatsappSettings, setWhatsappSettings] = useState({
@@ -149,6 +150,18 @@ export default function Settings() {
     const updated = dropdowns[key].filter(o => o !== option);
     setDropdowns({ ...dropdowns, [key]: updated });
     saveSetting(key, updated);
+  };
+
+  const handleAddCustomCategory = () => {
+    if (!newCustomCategory.trim()) return;
+    const key = 'dropdown_' + newCustomCategory.trim().toLowerCase().replace(/\s+/g, '_');
+    if (dropdowns[key]) {
+      setError('Custom category already exists');
+      return;
+    }
+    setDropdowns({ ...dropdowns, [key]: [] });
+    setNewCustomCategory('');
+    saveSetting(key, []);
   };
 
   const saveWhatsapp = (e) => {
@@ -315,7 +328,30 @@ export default function Settings() {
 
       {/* TAB 2: DROPDOWNS */}
       {activeTab === 'dropdowns' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-6">
+          <div className="bg-slate-900 p-5 rounded-xl border border-slate-800 shadow-sm text-white flex justify-between items-center mb-6">
+            <div>
+              <h3 className="font-bold text-lg">Add Custom Field Category</h3>
+              <p className="text-xs text-slate-400 mt-1">Create dynamic custom tracking fields (e.g. "Assignees", "Sales Persons")</p>
+            </div>
+            <div className="flex space-x-2">
+              <input 
+                type="text" 
+                value={newCustomCategory}
+                onChange={(e) => setNewCustomCategory(e.target.value)}
+                placeholder="e.g. Priority Level" 
+                className="px-4 py-2 border border-slate-700 rounded-md text-sm bg-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500" 
+              />
+              <button 
+                onClick={handleAddCustomCategory} 
+                className="bg-blue-600 px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-700"
+              >
+                Create
+              </button>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {Object.keys(dropdowns).map(key => {
             const title = key.replace('dropdown_', '').replace(/_/g, ' ');
             return (
@@ -336,6 +372,7 @@ export default function Settings() {
               </div>
             );
           })}
+          </div>
         </div>
       )}
 
