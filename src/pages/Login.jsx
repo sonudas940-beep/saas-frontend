@@ -36,7 +36,7 @@ export default function Login() {
           </div>
         </div>
 
-        <div className="absolute bottom-48 right-20 bg-white/10 backdrop-blur-md border border-white/10 px-5 py-3 rounded-2xl animate-float shadow-2xl flex items-center space-x-3 delay-300 z-10" style={{ animationDelay: '1.5s' }}>
+        <div className="absolute bottom-24 right-12 bg-white/10 backdrop-blur-md border border-white/10 px-5 py-3 rounded-2xl animate-float shadow-2xl flex items-center space-x-3 delay-300 z-10" style={{ animationDelay: '1.5s' }}>
           <div className="w-8 h-8 rounded-full bg-amber-400/20 flex items-center justify-center text-amber-400">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
           </div>
